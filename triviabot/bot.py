@@ -7,9 +7,7 @@ import irc3
 class MyPlugin:
     requires = [
         'irc3.plugins.core',
-        'irc3.plugins.userlist',
         'irc3.plugins.command',
-        'irc3.plugins.human',
     ]
 
     def __init__(self, bot):
@@ -38,23 +36,3 @@ class MyPlugin:
             %%echo <message>...
         """
         yield ' '.join(args['<message>'])
-
-
-def main():
-    config = dict(
-        nick='Adurna',
-        autojoins=['#lolbottest'],
-        host='irc.quakenet.org', port=6667, ssl=False,
-        includes=[
-            'irc3.plugins.core',
-            'irc3.plugins.command',
-            'irc3.plugins.human',
-            __name__,
-        ]
-    )
-    bot = irc3.IrcBot.from_config(config)
-    bot.run(forever=True)
-
-
-if __name__ == '__main__':
-    main()
