@@ -2,6 +2,9 @@
 import irc3
 from irc3.plugins.command import command
 
+from .db import *
+from .util import no_hl_nick
+
 
 class TriviaGame:
     def __init__(self):
@@ -42,8 +45,20 @@ class Trivia:
     def on_message(self, target, mask, data, **kwargs):
         if self.trivia.active:
             if data == self.trivia.answer.lower():
-                self.bot.privmsg(target, f'Correct answer "{self.trivia.answer}" by {mask.nick}! 🎉')
+                add_score(mask.nick, 10)
+                self.bot.privmsg(target, f'Correct answer "{self.trivia.answer}" by {mask.nick}! New score: {get_score(mask.nick)}🎉')
                 self.trivia.reset()
+
+    @command
+    def top(self, mask, target, args):
+        """Displays the top 10 users
+
+            %%top
+        """
+        msg = ''
+        for nick, score in get_top_users(10):
+            msg += f'{no_hl_nick(nick)} ({score}) | '
+        yield msg[:-3]
 
     @command
     def start(self, mask, target, args):
