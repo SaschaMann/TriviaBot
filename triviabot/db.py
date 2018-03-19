@@ -2,7 +2,8 @@
 from pony.orm import *
 
 db = Database()
-db.bind(provider='sqlite', filename=':memory:', create_db=True)
+# db.bind(provider='sqlite', filename=':memory:', create_db=True)
+db.bind(provider='postgres', user='postgres', password='example', host='172.17.0.2', database='postgres')
 
 
 class User(db.Entity):
