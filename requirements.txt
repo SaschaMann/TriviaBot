@@ -1,3 +1,4 @@
 irc3
 pony
 psycopg2
+requests

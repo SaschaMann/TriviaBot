@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import irc3
 from irc3.plugins.command import command
+import requests
 
 from .db import *
 from .util import no_hl_nick
@@ -70,6 +71,9 @@ class Trivia:
             yield f'Trivia is running already: {self.trivia.question}'
         else:
             self.trivia.active = True
-            self.trivia.question = 'What is love?'
-            self.trivia.answer = '42'
-            yield f'{mask.nick} has started a new round of trivia! {self.trivia.question}'
+            # self.trivia.question = 'What is love?'
+            # self.trivia.answer = '42'
+            r = requests.get('http://172.17.0.4:8080/v1/random_question').json()
+            self.trivia.question = r['question']
+            self.trivia.answer = r['answer']
+            yield f'{mask.nick} has started a new round of trivia! {self.trivia.question} [{r["patch"]}]'
