@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import functools
+
 import irc3
 from irc3.plugins.command import command
 import requests
 
+from .async_timer import AsyncTimer
 from .db import *
 from .util import no_hl_nick
 
@@ -30,8 +33,22 @@ class Trivia:
 
     def __init__(self, bot):
         self.bot = bot
+        self.config = bot.config.get('trivia', {})
+
+        # Default config values
+        if 'timeout' not in self.config:
+            self.config['timeout'] = 20
+
         self.log = self.bot.log
+        self.timer = None
         self.trivia = TriviaGame()
+
+    async def solve(self, target):
+        """Reveal answer, called if nobody has answered correctly after a set time."""
+        if not self.trivia.active:
+            return
+        self.bot.privmsg(target, f'Nobody has answered correctly. The correct answer was {self.trivia.answer}.')
+        self.trivia.reset()
 
     def connection_made(self):
         pass
@@ -48,6 +65,7 @@ class Trivia:
             if data == self.trivia.answer.lower():
                 add_score(mask.nick, 10)
                 self.bot.privmsg(target, f'Correct answer "{self.trivia.answer}" by {mask.nick}! New score: {get_score(mask.nick)}🎉')
+                self.timer.cancel()
                 self.trivia.reset()
 
     @command
@@ -76,4 +94,5 @@ class Trivia:
             r = requests.get('http://triviaquestions:8080/v1/random_question').json()
             self.trivia.question = r['question']
             self.trivia.answer = r['answer']
+            self.timer = AsyncTimer(self.config['timeout'], functools.partial(self.solve, target))
             yield f'{mask.nick} has started a new round of trivia! {self.trivia.question} [{r["patch"]}]'
