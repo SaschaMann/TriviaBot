@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import time
+
 from pony.orm import *
 
 db = Database()
@@ -8,7 +10,7 @@ while True:
         db.bind(provider='postgres', user='postgres', password='B4DFWh8BRiETpF7wH83JhpT4b3zPKJngYCiBJh2vxdK6h4tqNNRHnuXr7cmNQEgQ', host='postgres', database='postgres')
         break
     except OperationalError:
-        pass
+        time.sleep(1)
 
 
 class User(db.Entity):
