@@ -9,5 +9,4 @@ A League of Legends Trivia IRC Bot
 edis:redis -p 8080:8080 -d triviaquestions`
 
 ## Start TriviaBot
-`docker run --name triviabot --link triviapostgres:postgres --link triviaredis:r
-edis --link triviaquestions:triviaquestions -d triviabot`
+`docker run --name triviabot --link triviapostgres:postgres --link triviaredis:redis --link triviaquestions:triviaquestions -d triviabot`
