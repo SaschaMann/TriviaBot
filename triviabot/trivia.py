@@ -95,7 +95,13 @@ class Trivia:
             r = requests.get('http://triviaquestions:8080/v1/random_question').json()
             self.trivia.question = r['question']
             self.trivia.answer = r['answer']
+            
+            # Solve if nobody has answered correctly after a certain time
             self.timer = AsyncTimer(self.config['timeout'] + self.config['delay'], functools.partial(self.solve, target))
+
+            # Post the question after a delay
             AsyncTimer(self.config['delay'], functools.partial(
                 self.bot.privmsg, target, f'{self.trivia.question} [{r["patch"]}] [{self.config["timeout"]}]'))
+
+            # Announce the new round
             yield f'{mask.nick} has started a new round of trivia! Get ready!'
