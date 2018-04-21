@@ -35,9 +35,12 @@ class Trivia:
         self.bot = bot
         self.config = bot.config.get('trivia', {})
 
+        # TODO move to environment variables
         # Default config values
         if 'timeout' not in self.config:
             self.config['timeout'] = 20
+        if 'delay' not in self.config:
+            self.config['delay'] = 5
 
         self.log = self.bot.log
         self.timer = None
@@ -63,9 +66,9 @@ class Trivia:
     def on_message(self, target, mask, data, **kwargs):
         if self.trivia.active:
             if data == self.trivia.answer.lower():
+                self.timer.cancel()
                 add_score(mask.nick, 10)
                 self.bot.privmsg(target, f'Correct answer "{self.trivia.answer}" by {mask.nick}! New score: {get_score(mask.nick)}🎉')
-                self.timer.cancel()
                 self.trivia.reset()
 
     @command
@@ -89,10 +92,10 @@ class Trivia:
             yield f'Trivia is running already: {self.trivia.question}'
         else:
             self.trivia.active = True
-            # self.trivia.question = 'What is love?'
-            # self.trivia.answer = '42'
             r = requests.get('http://triviaquestions:8080/v1/random_question').json()
             self.trivia.question = r['question']
             self.trivia.answer = r['answer']
-            self.timer = AsyncTimer(self.config['timeout'], functools.partial(self.solve, target))
-            yield f'{mask.nick} has started a new round of trivia! {self.trivia.question} [{r["patch"]}]'
+            self.timer = AsyncTimer(self.config['timeout'] + self.config['delay'], functools.partial(self.solve, target))
+            AsyncTimer(self.config['delay'], functools.partial(
+                self.bot.privmsg, target, f'{self.trivia.question} [{r["patch"]}] [{self.config["timeout"]}]'))
+            yield f'{mask.nick} has started a new round of trivia! Get ready!'
