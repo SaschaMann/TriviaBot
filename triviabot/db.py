@@ -2,8 +2,13 @@
 from pony.orm import *
 
 db = Database()
-# db.bind(provider='sqlite', filename=':memory:', create_db=True)
-db.bind(provider='postgres', user='postgres', password='example', host='172.17.0.2', database='postgres')
+
+while True:
+    try:
+        db.bind(provider='postgres', user='postgres', password='B4DFWh8BRiETpF7wH83JhpT4b3zPKJngYCiBJh2vxdK6h4tqNNRHnuXr7cmNQEgQ', host='postgres', database='postgres')
+        break
+    except OperationalError:
+        pass
 
 
 class User(db.Entity):
