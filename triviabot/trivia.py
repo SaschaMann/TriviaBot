@@ -13,15 +13,16 @@ from .util import no_hl_nick
 class TriviaGame:
     def __init__(self):
         self.active = False
-        self.question = None
-        self.answer = None
+        self.question = self.answer = ''
+        self.last_round = 0.0
 
     def check_answer(self, guess):
         return self.active and guess.lower() == self.answer
 
     def reset(self):
-        self.question = self.answer = None
+        self.question = self.answer = ''
         self.active = False
+        self.last_round = time.time()
 
 
 @irc3.plugin
@@ -41,6 +42,8 @@ class Trivia:
             self.config['timeout'] = 20
         if 'delay' not in self.config:
             self.config['delay'] = 5
+        if 'cooldown' not in self.config:
+            self.config['cooldown'] = 300
 
         self.log = self.bot.log
         self.timer = None
@@ -91,11 +94,17 @@ class Trivia:
         if self.trivia.active:
             yield f'Trivia is running already: {self.trivia.question}'
         else:
+            # Check if cooldown has ended
+            delta_time = time.time() - self.trivia.last_round
+            if delta_time < self.config['cooldown']:
+                self.bot.privmsg(mask.nick, f'You have to wait {round(delta_time)} seconds before starting a new round.')
+                return
+
             self.trivia.active = True
             r = requests.get('http://triviaquestions:8080/v1/random_question').json()
             self.trivia.question = r['question']
             self.trivia.answer = r['answer']
-            
+
             # Solve if nobody has answered correctly after a certain time
             self.timer = AsyncTimer(self.config['timeout'] + self.config['delay'], functools.partial(self.solve, target))
 
