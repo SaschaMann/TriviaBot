@@ -2,12 +2,14 @@
 import time
 
 from pony.orm import *
+from .config import db as db_config
+from .config import db_provider
 
 db = Database()
 
 while True:
     try:
-        db.bind(provider='postgres', user='postgres', password='B4DFWh8BRiETpF7wH83JhpT4b3zPKJngYCiBJh2vxdK6h4tqNNRHnuXr7cmNQEgQ', host='postgres', database='postgres')
+        db.bind(db_provider, **db_config)
         break
     except OperationalError:
         time.sleep(1)
