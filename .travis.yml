@@ -5,7 +5,7 @@ env:
   global:
     secure: ga+SGQ7allYRP/wwchQdoMkfUNvKTXW31yuC5Dz2/OZ7T5UNbEzZpKpXZ1HuGnLC68SBXwOfW/bWHqMFArPFwbLV0pOxE/WZM1gbNhg7wowHjubRuE1XINiYevQ6nijhKucrS22ZXegFdLsY7gIcQiRWQQnNatIP5WcylO1ToyUzasrPgffWqBTLnuk+sTuMWbYjziQp5vcDh0S255IqKgDe0BsHVOtxdeWMliNJ8SUj+9BI1x2GB3g+97a/jJb67qtj2A6ctCSR8SBCFC/H1dmNZx/6bBcGMAVBS2i9ZvcdHaNU2P2cATt6fh3noEEbdZTlKhxICZc0ehQ6hExCYddlKDJ5dnkoBBvFQXmWyaH+yDfW50E+2O6P3yvL/4ArvkaOV9lf4RVmxOQiYMUdPxPS1tJkLtj8NUWao/1fwp6w/Rdii3C6HCgCsI8bm97GRbJThgDaMqNHueH//+p1HK14yQNT/mkFuW6gVOyFIhsr+9vb1V1RW5A+yLV+UdlWiPjNXDcrZDRghyMqD2tRSoJIYMmDWmXpzgMJ8+gZbcbvpjVn/TKMKB0/qK7gEJih+GxhK/P8PasnJps0Y+8e1r1VUFL1EbtoHcR4A0merapLh53BZBHe8tQQ0sqG0Odt0caM+7s73NmgPuZyzl18DSs59IsIpM5yTHw8U0tqL8c=
 install:
-  - pip install pytest-cov
+  - pip install pytest-cov codacy-coverage
   - pip install -r requirements.txt
 script:
   - pytest --cov=./ --cov-report=xml
