@@ -7,7 +7,7 @@ services:
     image: "postgres:alpine"
     restart: always
     environment:
-      POSTGRES_PASSWORD: B4DFWh8BRiETpF7wH83JhpT4b3zPKJngYCiBJh2vxdK6h4tqNNRHnuXr7cmNQEgQ
+      POSTGRES_PASSWORD: example
 
   triviaquestions:
     image: "triviaquestions"
